@@ -1,0 +1,22 @@
+Wolf Cabbage Shepard Sheep <>
+
+[Shepard + Sheep -->]
+Wolf Cabbage <> Shepard Sheep
+
+[<-- Shepard]
+Wolf Cabbage Shepard <> Sheep
+
+[Shepard + Wolf -->]
+Cabbage <> Wolf Shepard Sheep
+
+[<-- Shepard + Sheep]
+Cabbage Shepard Sheep <> Wolf
+
+[Shepard + Cabbage -->]
+Sheep <> Wolf Cabbage Shepard
+
+[<-- Shepard]
+Shepard Sheep <> Wolf Cabbage
+
+[Shepard + Sheep -->]
+<> Wolf Cabbage Shepard Sheep
