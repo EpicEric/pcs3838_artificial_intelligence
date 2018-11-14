@@ -8,17 +8,19 @@
 
 % Tratar entrada de nome de arquivo da linha de comando.
 cli :-
-    % Tentar ler primeiro argumento da linha de comando.
+    % Tentar ler argumentos da linha de comando.
     current_prolog_flag(argv, Argv),
-    (nth0(0, Argv, File) ->
-        true;
-        write("Please specify the file containing a sudoku board"), false),
+    cli(Argv).
+% Iterar arquivos
+cli([File | T]) :-
     % Abrir arquivo.
     read_file(File, Board),
     % Resolver por satisfacao de restricoes.
     solve_sudoku(Board),
     % Imprimir solucao.
-    print_board(Board).
+    print_board(Board),
+    cli(T).
+cli([]).
 
 % Imprimir primeira linha do tabuleiro de Sudoku.
 print_board([H|T]) :-
