@@ -6,48 +6,47 @@
 
 :- initialization(cli, main).
 
+% Tratar entrada de nome de arquivo da linha de comando.
 cli :-
-    % Tentar ler primeiro argumento da linha de comando
+    % Tentar ler primeiro argumento da linha de comando.
     current_prolog_flag(argv, Argv),
     (nth0(0, Argv, File) ->
         true;
         write("Please specify the file containing a sudoku board"), false),
-    % Abrir arquivo
+    % Abrir arquivo.
     read_file(File, Board),
-    % Imprimir tabuleiro
-    print_board(Board),
-    % Resolver por satisfacao de restricoes
-    solve_sudoku(Board, Solution),
-    % Imprimir solucao
-    print_board(Solution).
+    % Resolver por satisfacao de restricoes.
+    solve_sudoku(Board),
+    % Imprimir solucao.
+    print_board(Board).
 
-% Imprimir primeira linha do tabuleiro de Sudoku
+% Imprimir primeira linha do tabuleiro de Sudoku.
 print_board([H|T]) :-
     write("+---+---+---+"), nl, write("|"),
     print_board([H|T], 0).
 print_board([H|T], Position) :-
     pretty_print(Position),
-    % Nao imprimir valores zerados
+    % Nao imprimir valores zerados.
     (H == 0 -> write(" "); write(H)),
-    % Iterar posicao e valor
+    % Iterar posicao e valor.
     NewPosition is Position + 1,
     print_board(T, NewPosition).
-% Imprimir ultima linha do tabuleiro de Sudoku
+% Imprimir ultima linha do tabuleiro de Sudoku.
 print_board([], _) :-
     write("|"), nl, write("+---+---+---+"), nl, nl.
 
-% Adicionar caracteres ao redor dos numeros
+% Adicionar caracteres especiais ao redor dos numeros do tabuleiro conforme posicao.
 pretty_print(Position) :-
-    % Nao adicionar antes da primeira e depois da última linhas
+    % Nao adicionar antes da primeira e depois da última linhas.
     (Position =:= 80 ; Position =:= 0 -> true ; 
-        % Nova linha
+        % Verificar se e' nova linha.
         (Position mod 9 =:= 0 ->
-            % Verificar se e' linha multipla de 3
+            % Verificar se e' nova linha multipla de 3.
             (Position // 9 mod 3 =:= 0 ->
-                % Se for, adicionar separador
+                % Se for nova linha multipla de 3, adicionar borda horizontal dos blocos.
                 (write("|"), nl, write("+---+---+---+"), nl, write("|")) ;
-                % Senao, so' adicionar bordas laterais
+                % Senao, so' adicionar bordas laterais.
                 (write("|"), nl, write("|"))) ;
-            % Se nao for nova linha, adicionar borda vertical interna nos multiplos de 3
+            % Se nao for nova linha, adicionar borda vertical do bloco nas colunas multiplas de 3.
             (Position mod 3 =:= 0 ->
                 write("|"); true))).
