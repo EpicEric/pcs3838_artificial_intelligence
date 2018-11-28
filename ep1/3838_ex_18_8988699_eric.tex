@@ -533,7 +533,7 @@ código de implementações pré-existentes. Ele possui três módulos important
 \begin{enumerate}
 \item Módulo de resolução de Sudoku \texttt{solver.pl}. Utilizou-se a biblioteca
 \texttt{clpfd} para a resolução de problemas de satisfação de restrições, como
-indicado na documentação\cite{clp}. As restrições foram separadas em três
+indicado na documentação~\cite{clp}. As restrições foram separadas em três
 categorias, cada uma com sua função e implementação específicas:
 \begin{itemize}
 \item Restrição de linhas: Simplesmente adicionar restrição de valores únicos 
@@ -556,7 +556,9 @@ dos argumentos da linha de comando que invocou o programa e resolve, imprimindo
 na tela as respostas. Cada argumento será tratado recursivamente. Foi
 implementada também a lógica de impressão dos tabuleiros para exibição na tela
 de forma legível. A utilização de argumentos da linha de comando se baseou em
-uma implementação de servidor em Prolog\cite{server}.
+uma implementação de servidor em Prolog~\cite{server}. Além disso, esse módulo
+realiza o \texttt{trace} da solução dos tabuleiros quando o Prolog roda em
+configuração de debug (por padrão).
 \end{enumerate}
 
 Esses módulos foram integrados para resolver tabuleiros em arquivos e imprimir
@@ -566,21 +568,22 @@ dos programas.
 
 \section{Descrição dos Experimentos}
 Foram escolhidos dois tabuleiros de Sudoku para testes, criados por um
-aplicativo de celular\cite{app}. O primeiro foi gerado na configuração ``Easy'',
-e o segundo, na configuração ``Nightmare''. Eles foram salvos respectivamente
-como \texttt{sudoku1.txt} e \texttt{sudoku2.txt}, no formato de listas do Prolog
-esperado.
+aplicativo de celular~\cite{app}. O primeiro foi gerado na configuração
+``Easy'', e o segundo, na configuração ``Nightmare''. Eles foram salvos
+respectivamente como \texttt{sudoku1.txt} e \texttt{sudoku2.txt}, no formato de
+listas do Prolog esperado.
 
 Feito isso, o programa foi executado no SWI-Prolog da linha de comando de um
-MacBook. Utilizando-se o utilitário do terminal \texttt{time}, obteve-se um tempo de
-execução de aproximadamente 330 ms para a resolução dos dois tabuleiros.
+MacBook. Utilizando-se o utilitário do terminal \texttt{time}, obteve-se um
+tempo de execução de aproximadamente 330 ms para a resolução dos dois
+tabuleiros.
 
 
 \section{Análise dos Resultados}
 Abaixo, reproduziu-se os resultados obtidos na execução do programa:
 
-\begin{verbatim}
-$ swipl main.pl sudoku1.txt sudoku2.txt
+\begin{footnotesize}\begin{verbatim}
+$ swipl --nodebug main.pl sudoku1.txt sudoku2.txt
 
 +---+---+---+
 |843|621|795|
@@ -609,22 +612,87 @@ $ swipl main.pl sudoku1.txt sudoku2.txt
 |268|759|134|
 |145|382|769|
 +---+---+---+
-\end{verbatim}
+\end{verbatim}\end{footnotesize}
 
-Os resultados obtidos foram comparados com os de uma ferramenta online para
-resolver Sudoku\cite{online-solver}, retornando os mesmos valores que os
+Os resultados obtidos foram comparados com os de uma ferramenta online de
+resolução de Sudoku~\cite{online-solver}, retornando os mesmos valores que os
 encontrados acima. Dessa forma, constatou-se a implementação correta do
 programa.
+
+Também foi testada a execução do \texttt{trace} de solução~\cite{trace}. Abaixo
+está um exemplo de uso da ferramenta para depuração:
+
+\begin{footnotesize}\begin{verbatim}
+$ swipl main.pl sudoku1.txt
+
+Begin trace
+   Call: (9) solver:solve_sudoku([8, _396, _402, _408,
+     2, _420, 7|...]) ? creep
+   Call: (10) clpfd:ins([8, _396, _402, _408, 2, _420,
+     7|...], ..(1, 9)) ? creep
+   Call: (11) clpfd:fd_must_be_list([8, _396, _402,
+     _408, 2, _420, 7|...]) ? skip
+   Exit: (11) clpfd:fd_must_be_list([8, _396, _402,
+     _408, 2, _420, 7|...]) ? creep
+   Call: (11) clpfd:'__aux_maplist/2_fd_variable+0'([
+     8, _396, _402, _408, 2, _420, 7|...]) ? up
+   Exit: (10) clpfd:ins([8, _974{clpfd = ...}, _1086{
+     clpfd = ...}, _1184{clpfd = ...}, 2, _1282{clpfd
+     = ...}, 7|...], ..(1, 9)) ? creep
+   Call: (10) solver:row_constraint([8, _974{clpfd =
+     ...}, _1086{clpfd = ...}, _1184{clpfd = ...}, 2,
+     _1282{clpfd = ...}, 7|...]) ? creep
+   Call: (11) clpfd:all_distinct([8, _974{clpfd = ...}
+     , _1086{clpfd = ...}, _1184{clpfd = ...}, 2,
+     _1282{clpfd = ...}, 7|...]) ? creep
+   Call: (12) clpfd:fd_must_be_list([8, _974{clpfd =
+     ...}, _1086{clpfd = ...}, _1184{clpfd = ...}, 2,
+     _1282{clpfd = ...}, 7|...]) ? up
+   Exit: (11) clpfd:all_distinct([8, _974{clpfd = ...
+     }, _1086{clpfd = ...}, _1184{clpfd = ...}, 2,
+     _1282{clpfd = ...}, 7|...]) ? up
+   Exit: (10) solver:row_constraint([8, _568{clpfd =
+     ...}, _636{clpfd = ...}, _698{clpfd = ...}, 2,
+     _760{clpfd = ...}, 7|...]) ? creep
+   Call: (10) solver:column_constraint([8, _568{clpfd
+     = ...}, _636{clpfd = ...}, _698{clpfd = ...}, 2,
+     _760{clpfd = ...}, 7|...]) ? skip
+   Exit: (10) solver:column_constraint([8, 4, 3, 6, 2,
+     1, 7|...]) ? creep
+   Call: (10) solver:block_constraint([8, 4, 3, 6, 2,
+     1, 7|...]) ? skip
+   Exit: (10) solver:block_constraint([8, 4, 3, 6, 2,
+     1, 7|...]) ? creep
+   Exit: (9) solver:solve_sudoku([8, 4, 3, 6, 2,
+     1, 7|...]) ? no debug
++---+---+---+
+|843|621|795|
+|691|735|248|
+|572|498|613|
++---+---+---+
+|365|247|981|
+|219|586|437|
+|487|319|562|
++---+---+---+
+|758|164|329|
+|124|953|876|
+|936|872|154|
++---+---+---+
+\end{verbatim}\end{footnotesize}
+
+É possível verificar que as funções da biblioteca \texttt{clpfd} realizam
+operações a cada nova restrição adicionada para solucionar o problema.
 
 
 \section{Conclusões e Trabalhos Futuros}
 O projeto obteve os resultados esperados pelo enunciado do exercício prático.
 Além de tudo, foi possível compreender como utilizar a satisfação de restrições
-na linguagem Prolog.
+na linguagem Prolog, e como utilizar o \texttt{trace} para examinar a execução
+de um programa em linguagem lógica.
 
 No futuro, este projeto pode ser expandido para tratar um arquivo em formato
-não-Prolog, ou apresentar um passo-a-passo de resolução de Sudoku, ou até mesmo
-gerar novos tabuleiros para jogo.
+não-Prolog, apresentar um passo-a-passo humanamente factível para resolução de
+Sudoku, ou até mesmo gerar novos tabuleiros válidos para jogar.
 
 
 
@@ -799,6 +867,8 @@ GitHub. \emph{SWI-Prolog~/~swish}. Disponível em: https://github.com/SWI-Prolog
 STRUHAR, V. \emph{Best Sudoku Free}. Disponível em: https://play.google.com/store/apps/details?id=cz.struharv.sudoku. Acesso em 5 de novembro de 2018.
 \bibitem{online-solver}
 Sudoku Solutions. \emph{Online Sudoku Solver and Helper}. Disponível em: http://www.sudoku-solutions.com. Acesso em 13 de novembro de 2018.
+\bibitem{trace}
+SWI-Prolog. \emph{Debugging and Tracing Programs}. Disponível em: http://www.swi-prolog.org/pldoc/man?section=debugger. Acesso em 20 de novembro de 2018.
 %\bibitem{IEEEhowto:kopka}
 %H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
 %  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.

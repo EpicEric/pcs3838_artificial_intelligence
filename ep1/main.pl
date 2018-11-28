@@ -15,8 +15,14 @@ cli :-
 cli([File | T]) :-
     % Abrir arquivo.
     read_file(File, Board),
+    % Ativar trace para debug
+    (current_prolog_flag(generate_debug_info, true) ->
+        write("Begin trace"), nl, trace;
+        true),
     % Resolver por satisfacao de restricoes.
     solve_sudoku(Board),
+    % Terminar trace,
+    notrace,
     % Imprimir solucao.
     print_board(Board),
     cli(T).
